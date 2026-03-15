@@ -606,9 +606,39 @@ export default function BreatheFree() {
   const [notif, setNotif] = useState("idle");
   const [wlEmail, setWlEmail] = useState("");
   const [wlDone, setWlDone] = useState(() => !!localStorage.getItem("bf_wl"));
+  
+  // PWA Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 60000); return () => clearInterval(t); }, []);
   useEffect(() => { document.documentElement.setAttribute("data-theme", dark ? "dark" : "light"); localStorage.setItem("bf_dark", dark ? "1" : "0"); }, [dark]);
+
+  // PWA Setup Effect
+  useEffect(() => {
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+
+    // Catch the install prompt
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    }
+  };
 
   const hoursClean = quitDate ? Math.max(0, (now - new Date(quitDate).getTime()) / 3600000) : 0;
   const daysClean = Math.floor(hoursClean / 24);
@@ -651,7 +681,23 @@ export default function BreatheFree() {
       <div className="app">
         <nav className="nav">
           <div className="logo">Breathe<em>Free</em></div>
-          <button className="dark-toggle" onClick={() => setDark(d => !d)}>{dark ? "☀️ Light" : "🌙 Dark"}</button>
+          
+          {/* PWA Install Button and Dark Toggle */}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {deferredPrompt && (
+              <button 
+                className="btn btn-amber" 
+                style={{ padding: "6px 12px", fontSize: "0.8rem" }} 
+                onClick={handleInstallClick}
+              >
+                📲 Install App
+              </button>
+            )}
+            <button className="dark-toggle" onClick={() => setDark(d => !d)}>
+              {dark ? "☀️ Light" : "🌙 Dark"}
+            </button>
+          </div>
+
           <div className="tabs">
             {TABS.map(t => (
               <button key={t.key} className={`tab${tab === t.key ? " active" : ""}`} onClick={() => setTab(t.key)}>{t.label}</button>
