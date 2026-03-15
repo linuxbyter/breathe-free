@@ -568,7 +568,7 @@ function SavingsTab({ moneySaved, days }) {
         <div style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
           <a href="https://chumz.io" target="_blank" rel="noreferrer" className="btn btn-amber">Save on Chumz →</a>
           {/* UPDATED KCB M-PESA LINK */}
-          <a href="https://ke.kcbgroup.com/personal/save-borrow/save/kcb-m-pesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}>KCB M-Pesa →</a>
+          <a href="https://ke.kcbgroup.com/for-you/open-account/savings/goal-savings-account" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}>KCB M-Pesa →</a>
         </div>
       </div>
 
