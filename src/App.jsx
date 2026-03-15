@@ -20,7 +20,6 @@ const STYLES = `
   html { cursor: default; }
   body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); transition: background 0.3s, color 0.3s; -webkit-font-smoothing: antialiased; }
 
-  /* prevent browser text-cursor on non-input elements */
   div, span, p, h1, h2, h3, h4, li, td, th, label { cursor: default; user-select: none; -webkit-user-select: none; }
   input, textarea { cursor: text; user-select: text; -webkit-user-select: text; }
   button, a, [role="button"] { cursor: pointer !important; }
@@ -42,9 +41,15 @@ const STYLES = `
   .card-title { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--green); margin-bottom: 4px; }
   .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }
 
-  /* ONBOARDING */
-  .onboard-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .onboard-card { background: var(--surface); border-radius: 20px; padding: 36px 28px; max-width: 480px; width: 100%; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  /* AUTH & ONBOARDING */
+  .auth-wrap, .onboard-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .auth-card, .onboard-card { background: var(--surface); border-radius: 20px; padding: 36px 28px; max-width: 480px; width: 100%; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .auth-card { max-width: 400px; text-align: center; }
+  .auth-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--green); margin-bottom: 8px; }
+  .auth-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; }
+  .auth-form { display: flex; flex-direction: column; gap: 12px; }
+  .auth-toggle { font-size: 0.8rem; color: var(--green); margin-top: 16px; font-weight: 600; cursor: pointer; border: none; background: none; }
+  
   .onboard-prog { display: flex; gap: 6px; margin-bottom: 24px; }
   .onboard-dot { height: 4px; flex: 1; border-radius: 2px; background: var(--border); transition: background 0.3s; }
   .onboard-dot.done { background: var(--green); }
@@ -106,17 +111,17 @@ const STYLES = `
   .share-hint { color: rgba(255,255,255,0.75); font-size: 0.78rem; text-align: center; margin-top: 10px; }
 
   /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--green); color: white; border: none; padding: 11px 20px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; transition: opacity 0.15s; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--green); color: white; border: none; padding: 11px 20px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; transition: opacity 0.15s; }
   .btn:hover { opacity: 0.88; }
   .btn-amber { background: var(--amber); }
   .btn-red { background: var(--red); }
-  .btn-outline { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
   .btn-outline:hover { background: var(--bg); }
   .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn[disabled] { opacity: 0.45; pointer-events: none; }
 
   /* INPUTS */
-  .input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--bg); color: var(--text); outline: none; }
+  .input { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s; }
   .input:focus { border-color: var(--green); }
   .input-row { display: flex; gap: 8px; margin-bottom: 14px; }
   .input-row .input { margin-bottom: 0; }
@@ -309,6 +314,91 @@ const liveCount = () => 1847 + (Math.floor(Date.now() / 86400000) % 30) * 7;
 
 /* ─── SUB-COMPONENTS ─────────────────────────────────────────────────────── */
 
+function AuthScreen({ onLogin }) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email && password) {
+      // Plug your backend auth logic here later
+      onLogin(email);
+    }
+  };
+
+  return (
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <div className="auth-title">Breathe<em>Free</em></div>
+        <div className="auth-sub">{isLogin ? "Welcome back to your journey." : "Start your journey today."}</div>
+        
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <input 
+            type="email" 
+            className="input" 
+            placeholder="Email address" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            required 
+          />
+          <input 
+            type="password" 
+            className="input" 
+            placeholder="Password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            required 
+          />
+          <button type="submit" className="btn" style={{ marginTop: 8, width: "100%" }}>
+            {isLogin ? "Sign In" : "Create Account"}
+          </button>
+        </form>
+
+        <button className="auth-toggle" onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Onboarding({ onDone }) {
+  const qs = [
+    { q: "How many cigarettes were you smoking per day?", opts: ["1–5 (light smoker)", "6–10", "11–20 (a pack)", "More than 20"] },
+    { q: "What's your main reason for quitting?", opts: ["My health", "My family / loved ones", "The cost", "I just want to be free"] },
+    { q: "What's been your biggest challenge?", opts: ["Cravings after meals", "Stress at work", "Social situations", "Boredom"] },
+  ];
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [sel, setSel] = useState(null);
+
+  const next = () => {
+    if (sel === null) return;
+    const upd = [...answers, sel];
+    if (step < qs.length - 1) { setAnswers(upd); setSel(null); setStep(step + 1); }
+    else { localStorage.setItem("bf_onboard", JSON.stringify(upd)); onDone(); }
+  };
+
+  return (
+    <div className="onboard-wrap">
+      <div className="onboard-card">
+        <div className="onboard-prog">{qs.map((_, i) => <div key={i} className={`onboard-dot${i <= step ? " done" : ""}`} />)}</div>
+        <div className="onboard-step">Step {step + 1} of {qs.length}</div>
+        <div className="onboard-q">{qs[step].q}</div>
+        <div className="onboard-opts">
+          {qs[step].opts.map((o, i) => (
+            <button key={i} className={`onboard-opt${sel === i ? " sel" : ""}`} onClick={() => setSel(i)}>{o}</button>
+          ))}
+        </div>
+        <button className="btn" style={{ marginTop: 20, width: "100%", opacity: sel === null ? 0.45 : 1 }} onClick={next} disabled={sel === null}>
+          {step < qs.length - 1 ? "Continue →" : "Start My Journey"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function LungViz({ days }) {
   const pct = Math.min(100, Math.round((days / 365) * 100));
   const r = Math.round(180 - 180 * pct / 100);
@@ -441,42 +531,6 @@ function ShareCard({ days, cigs, money, onClose }) {
   );
 }
 
-function Onboarding({ onDone }) {
-  const qs = [
-    { q: "How many cigarettes were you smoking per day?", opts: ["1–5 (light smoker)", "6–10", "11–20 (a pack)", "More than 20"] },
-    { q: "What's your main reason for quitting?", opts: ["My health", "My family / loved ones", "The cost", "I just want to be free"] },
-    { q: "What's been your biggest challenge?", opts: ["Cravings after meals", "Stress at work", "Social situations", "Boredom"] },
-  ];
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [sel, setSel] = useState(null);
-
-  const next = () => {
-    if (sel === null) return;
-    const upd = [...answers, sel];
-    if (step < qs.length - 1) { setAnswers(upd); setSel(null); setStep(step + 1); }
-    else { localStorage.setItem("bf_onboard", JSON.stringify(upd)); onDone(); }
-  };
-
-  return (
-    <div className="onboard-wrap">
-      <div className="onboard-card">
-        <div className="onboard-prog">{qs.map((_, i) => <div key={i} className={`onboard-dot${i <= step ? " done" : ""}`} />)}</div>
-        <div className="onboard-step">Step {step + 1} of {qs.length}</div>
-        <div className="onboard-q">{qs[step].q}</div>
-        <div className="onboard-opts">
-          {qs[step].opts.map((o, i) => (
-            <button key={i} className={`onboard-opt${sel === i ? " sel" : ""}`} onClick={() => setSel(i)}>{o}</button>
-          ))}
-        </div>
-        <button className="btn" style={{ marginTop: 20, width: "100%", opacity: sel === null ? 0.45 : 1 }} onClick={next} disabled={sel === null}>
-          {step < qs.length - 1 ? "Continue →" : "Start My Journey"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function SavingsTab({ moneySaved, days }) {
   const [goals, setGoals] = useState(() => JSON.parse(localStorage.getItem("bf_goals") || "[]"));
   const [newName, setNewName] = useState("");
@@ -513,7 +567,8 @@ function SavingsTab({ moneySaved, days }) {
         <div className="save-amount-lbl">saved over {days} days (based on ~10 cigarettes/day)</div>
         <div style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
           <a href="https://chumz.io" target="_blank" rel="noreferrer" className="btn btn-amber">Save on Chumz →</a>
-          <a href="https://www.kcbgroup.com/personal/save-and-invest/kcb-mpesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}>KCB M-Pesa →</a>
+          {/* UPDATED KCB M-PESA LINK */}
+          <a href="https://ke.kcbgroup.com/personal/save-borrow/save/kcb-m-pesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}>KCB M-Pesa →</a>
         </div>
       </div>
 
@@ -578,12 +633,14 @@ function SavingsTab({ moneySaved, days }) {
             <div className="alt-card">
               <div className="alt-name">KCB M-Pesa</div>
               <div className="alt-info">Target Savings Account — up to 6.3% p.a. Save directly from M-Pesa.</div>
-              <a href="https://www.kcbgroup.com/personal/save-and-invest/kcb-mpesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
+              {/* UPDATED KCB M-PESA LINK */}
+              <a href="https://ke.kcbgroup.com/personal/save-borrow/save/kcb-m-pesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
             </div>
             <div className="alt-card">
               <div className="alt-name">M-Shwari</div>
-              <div className="alt-info">Safaricom + CBA — lock savings, earn interest, access credit.</div>
-              <a href="https://www.safaricom.co.ke/personal/m-pesa/do-more-with-m-pesa/m-shwari" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
+              <div className="alt-info">Safaricom + NCBA — lock savings, earn interest, access credit.</div>
+              {/* UPDATED M-SHWARI LINK */}
+              <a href="https://www.safaricom.co.ke/personal/m-pesa/m-pesa-services/m-shwari" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
             </div>
           </div>
         </div>
@@ -595,6 +652,7 @@ function SavingsTab({ moneySaved, days }) {
 /* ─── MAIN APP ───────────────────────────────────────────────────────────── */
 export default function BreatheFree() {
   const [dark, setDark] = useState(() => localStorage.getItem("bf_dark") === "1");
+  const [user, setUser] = useState(() => localStorage.getItem("bf_user") || null);
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem("bf_onboard"));
   const [tab, setTab] = useState("tracker");
   const [filter, setFilter] = useState("all");
@@ -615,17 +673,13 @@ export default function BreatheFree() {
 
   // PWA Setup Effect
   useEffect(() => {
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(console.error);
     }
-
-    // Catch the install prompt
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
@@ -658,6 +712,11 @@ export default function BreatheFree() {
   };
   const submitWl = () => { if (!wlEmail.includes("@")) return; localStorage.setItem("bf_wl", wlEmail); setWlDone(true); };
 
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem("bf_user");
+  };
+
   const filtered = filter === "all" ? BRANDS : BRANDS.filter(b =>
     filter === "flavoured" ? b.type.toLowerCase().includes("flavour") || b.type.toLowerCase().includes("menthol") : b.type.toLowerCase() === "regular"
   );
@@ -671,8 +730,30 @@ export default function BreatheFree() {
     { key: "about", label: "About" },
   ];
 
-  if (!onboarded) return <><style>{STYLES}</style><Onboarding onDone={() => setOnboarded(true)} /></>;
+  // 1. Force Login Screen first
+  if (!user) {
+    return (
+      <>
+        <style>{STYLES}</style>
+        <AuthScreen onLogin={(email) => { 
+          setUser(email); 
+          localStorage.setItem("bf_user", email); 
+        }} />
+      </>
+    );
+  }
 
+  // 2. Only show Onboarding if logged in but not onboarded
+  if (!onboarded) {
+    return (
+      <>
+        <style>{STYLES}</style>
+        <Onboarding onDone={() => setOnboarded(true)} />
+      </>
+    );
+  }
+
+  // 3. Show Main App
   return (
     <>
       <style>{STYLES}</style>
@@ -682,7 +763,6 @@ export default function BreatheFree() {
         <nav className="nav">
           <div className="logo">Breathe<em>Free</em></div>
           
-          {/* PWA Install Button and Dark Toggle */}
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             {deferredPrompt && (
               <button 
@@ -695,6 +775,9 @@ export default function BreatheFree() {
             )}
             <button className="dark-toggle" onClick={() => setDark(d => !d)}>
               {dark ? "☀️ Light" : "🌙 Dark"}
+            </button>
+            <button className="btn btn-outline" style={{ padding: "6px 12px", fontSize: "0.8rem" }} onClick={handleSignOut}>
+              Sign Out
             </button>
           </div>
 
@@ -817,7 +900,14 @@ export default function BreatheFree() {
             <div className="comm-tag">Fitness Community</div>
             <div className="comm-title">The Vitora Collective</div>
             <div className="comm-sub">A movement for people reclaiming their bodies after smoking. Runs, rides, breathwork, strength — because quitting is only the beginning.</div>
-            <button className="community-join" style={{ display:"inline-block",marginTop:18,background:"var(--amber)",color:"white",padding:"10px 22px",borderRadius:10,fontSize:"0.85rem",fontWeight:600,border:"none" }}>Join the Collective →</button>
+            {/* UPDATED DEAD BUTTON */}
+            <button 
+              className="community-join" 
+              style={{ display:"inline-block",marginTop:18,background:"var(--amber)",color:"white",padding:"10px 22px",borderRadius:10,fontSize:"0.85rem",fontWeight:600,border:"none" }}
+              onClick={() => alert("The Vitora Collective WhatsApp group is launching soon! Keep checking back.")}
+            >
+              Join the Collective →
+            </button>
           </div>
 
           <div className="card">
