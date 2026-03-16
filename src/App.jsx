@@ -634,13 +634,13 @@ function SavingsTab({ moneySaved, days }) {
               <div className="alt-name">KCB M-Pesa</div>
               <div className="alt-info">Target Savings Account — up to 6.3% p.a. Save directly from M-Pesa.</div>
               {/* UPDATED KCB M-PESA LINK */}
-              <a href="https://ke.kcbgroup.com/personal/save-borrow/save/kcb-m-pesa" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
+              <a href="https://ke.kcbgroup.com/for-you/open-account/savings/goal-savings-account" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
             </div>
             <div className="alt-card">
-              <div className="alt-name">M-Shwari</div>
+              <div className="alt-name">M-Shwari 52 week challenge</div>
               <div className="alt-info">Safaricom + NCBA — lock savings, earn interest, access credit.</div>
               {/* UPDATED M-SHWARI LINK */}
-              <a href="https://www.safaricom.co.ke/personal/m-pesa/m-pesa-services/m-shwari" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
+              <a href="https://www.safaricom.co.ke/main-mpesa/m-pesa-services/credit-and-savings/the-mshwari-52-week-challenge" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ marginTop: 8, padding: "5px 12px", fontSize: "0.75rem" }}>Open →</a>
             </div>
           </div>
         </div>
